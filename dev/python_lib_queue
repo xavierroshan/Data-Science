@@ -1,0 +1,26 @@
+# import queue
+
+
+# q = queue.Queue()
+# q.put('first')
+# q.put('second')
+# q.put('third')
+# print(q.get())
+# print(q.get())
+# print(q.get())
+
+# r = queue.LifoQueue()
+# r.put('first')
+# r.put('second')
+# r.put('third')
+# print(r.get())
+# print(r.get())
+# print(r.get())
+
+# s=queue.PriorityQueue()
+# s.put(2, 'Medium P')
+# s.put(1, 'high P')
+# s.put(3, 'Low P')
+# print(s.get())
+# print(s.get())
+# print(s.get())
