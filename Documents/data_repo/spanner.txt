@@ -229,3 +229,85 @@ create_tables()
 
 # Insert fake data into Spanner
 insert_fake_data()
+
+
+############################################
+Code without faker data
+from google.cloud import spanner
+
+# Replace with your GCP project, instance, and database details
+PROJECT_ID = "your-project-id"
+INSTANCE_ID = "your-instance-id"
+DATABASE_ID = "your-database-id"
+
+# Create a Spanner client
+client = spanner.Client()
+
+# Get Spanner instance and database
+instance = client.instance(INSTANCE_ID)
+database = instance.database(DATABASE_ID)
+
+# ---- CREATE TABLE (Run once, then comment out) ----
+operation = database.update_ddl([
+    """CREATE TABLE Users (
+        user_id STRING(36) NOT NULL,
+        name STRING(100),
+        age INT64,
+        PRIMARY KEY (user_id)
+    )"""
+])
+print("Waiting for table creation...")
+operation.result()
+print("Table created successfully.")
+
+# ---- INSERT DATA ----
+with database.batch() as batch:
+    batch.insert(
+        table="Users",
+        columns=("user_id", "name", "age"),
+        values=[
+            ("123e4567-e89b-12d3-a456-426614174000", "Alice", 25),
+            ("223e4567-e89b-12d3-a456-426614174001", "Bob", 30),
+        ]
+    )
+print("Records inserted successfully.")
+
+# ---- READ DATA ----
+with database.snapshot() as snapshot:
+    results = snapshot.execute_sql("SELECT * FROM Users")
+    for row in results:
+        print(f"User ID: {row[0]}, Name: {row[1]}, Age: {row[2]}")
+######################
+#code with transaction
+
+from google.cloud import spanner
+
+# Initialize Spanner client
+spanner_client = spanner.Client()
+instance_id = "your-instance-id"
+database_id = "your-database-id"
+
+# Get Spanner instance and database
+instance = spanner_client.instance(instance_id)
+database = instance.database(database_id)
+
+def spanner_transaction():
+    try:
+        # Use `with` statement to ensure the transaction is managed properly
+        with database.transaction() as transaction:
+            # Execute SQL statements
+            transaction.execute_update(
+                "INSERT INTO accounts (id, name, balance) VALUES (1, 'Alice', 1000)"
+            )
+            transaction.execute_update(
+                "INSERT INTO accounts (id, name, balance) VALUES (2, 'Bob', 1500)"
+            )
+            
+            # Commit happens automatically if no exception is raised
+            print("Transaction committed.")
+
+    except Exception as e:
+        print("Error:", e)
+
+# Call the function to execute the transaction
+spanner_transaction()
