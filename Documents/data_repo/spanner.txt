@@ -1,0 +1,231 @@
+
+# Schema of the spanner tables
+-- Create the Parent table
+CREATE TABLE Customers (
+    CustomerID INT64 NOT NULL,
+    FirstName STRING(100),
+    LastName STRING(100),
+    Email STRING(100),
+    Phone STRING(20),
+) PRIMARY KEY(CustomerID);
+
+-- Create the Order table, interleaved within Customers
+CREATE TABLE Orders (
+    OrderID INT64 NOT NULL,
+    CustomerID INT64 NOT NULL,
+    OrderDate DATE,
+    TotalAmount NUMERIC,
+) PRIMARY KEY(OrderID),
+  INTERLEAVE IN PARENT Customers ON DELETE CASCADE;
+
+-- Create the Product table, interleaved within Orders
+CREATE TABLE Products (
+    ProductID INT64 NOT NULL,
+    OrderID INT64 NOT NULL,
+    ProductName STRING(100),
+    Quantity INT64,
+    Price NUMERIC,
+) PRIMARY KEY(ProductID),
+  INTERLEAVE IN PARENT Orders ON DELETE CASCADE;
+
+-- Create the Payment table, interleaved within Orders
+CREATE TABLE Payments (
+    PaymentID INT64 NOT NULL,
+    OrderID INT64 NOT NULL,
+    PaymentDate DATE,
+    PaymentAmount NUMERIC,
+) PRIMARY KEY(PaymentID),
+  INTERLEAVE IN PARENT Orders ON DELETE CASCADE;
+
+-- Create the Shipment table, interleaved within Orders
+CREATE TABLE Shipments (
+    ShipmentID INT64 NOT NULL,
+    OrderID INT64 NOT NULL,
+    ShipmentDate DATE,
+    Carrier STRING(100),
+    TrackingNumber STRING(100),
+) PRIMARY KEY(ShipmentID),
+  INTERLEAVE IN PARENT Orders ON DELETE CASCADE;
+
+
+###############################################
+#code to create spanner table and populate it with data
+import random
+import uuid
+from faker import Faker
+from google.cloud import spanner
+
+# Initialize the Faker object to generate fake data
+fake = Faker()
+
+# Set up Spanner client and connection
+client = spanner.Client()
+instance = client.instance('your-instance-id')  # Replace with your instance ID
+database = instance.database('your-database-id')  # Replace with your database ID
+
+# Function to create the tables in Spanner
+def create_tables():
+    with database.batch() as batch:
+        # Create Customers table
+        batch.create_table(
+            table_name='Customers',
+            columns=[
+                ('CustomerID', spanner.param_types.STRING),
+                ('FirstName', spanner.param_types.STRING),
+                ('LastName', spanner.param_types.STRING),
+                ('Email', spanner.param_types.STRING),
+                ('Phone', spanner.param_types.STRING),
+            ],
+            primary_key=['CustomerID'],
+        )
+
+        # Create Orders table (interleaved in Customers)
+        batch.create_table(
+            table_name='Orders',
+            columns=[
+                ('OrderID', spanner.param_types.STRING),
+                ('CustomerID', spanner.param_types.STRING),
+                ('OrderDate', spanner.param_types.DATE),
+                ('TotalAmount', spanner.param_types.FLOAT64),
+            ],
+            primary_key=['OrderID'],
+            interleave_in_parent='Customers',
+            on_delete='CASCADE'
+        )
+
+        # Create Products table (interleaved in Orders)
+        batch.create_table(
+            table_name='Products',
+            columns=[
+                ('ProductID', spanner.param_types.STRING),
+                ('OrderID', spanner.param_types.STRING),
+                ('ProductName', spanner.param_types.STRING),
+                ('Quantity', spanner.param_types.INT64),
+                ('Price', spanner.param_types.FLOAT64),
+            ],
+            primary_key=['ProductID'],
+            interleave_in_parent='Orders',
+            on_delete='CASCADE'
+        )
+
+        # Create Payments table (interleaved in Orders)
+        batch.create_table(
+            table_name='Payments',
+            columns=[
+                ('PaymentID', spanner.param_types.STRING),
+                ('OrderID', spanner.param_types.STRING),
+                ('PaymentDate', spanner.param_types.DATE),
+                ('PaymentAmount', spanner.param_types.FLOAT64),
+            ],
+            primary_key=['PaymentID'],
+            interleave_in_parent='Orders',
+            on_delete='CASCADE'
+        )
+
+        # Create Shipments table (interleaved in Orders)
+        batch.create_table(
+            table_name='Shipments',
+            columns=[
+                ('ShipmentID', spanner.param_types.STRING),
+                ('OrderID', spanner.param_types.STRING),
+                ('ShipmentDate', spanner.param_types.DATE),
+                ('Carrier', spanner.param_types.STRING),
+                ('TrackingNumber', spanner.param_types.STRING),
+            ],
+            primary_key=['ShipmentID'],
+            interleave_in_parent='Orders',
+            on_delete='CASCADE'
+        )
+
+    print("Tables created successfully!")
+
+# Function to generate and insert data into Spanner
+def insert_fake_data():
+    customers = []
+    orders = []
+    products = []
+    payments = []
+    shipments = []
+
+    # Generate 25 fake customers
+    for _ in range(25):  # Changed from 100 to 25 customers
+        customer_id = str(uuid.uuid4())  # Generate a unique UUID for CustomerID
+        first_name = fake.first_name()
+        last_name = fake.last_name()
+        email = fake.email()
+        phone = fake.phone_number()
+        customers.append((customer_id, first_name, last_name, email, phone))
+
+        # Generate 1 to 3 fake orders for each customer
+        for _ in range(random.randint(1, 3)):
+            order_id = str(uuid.uuid4())  # Generate a unique UUID for OrderID
+            order_date = fake.date_this_year()
+            total_amount = round(random.uniform(20, 500), 2)
+            orders.append((order_id, customer_id, order_date, total_amount))
+
+            # Generate exactly 4 products for each order
+            for _ in range(4):  # Changed to always generate 4 products per order
+                product_id = str(uuid.uuid4())  # Generate a unique UUID for ProductID
+                product_name = fake.word()
+                quantity = random.randint(1, 5)
+                price = round(random.uniform(5, 100), 2)
+                products.append((product_id, order_id, product_name, quantity, price))
+
+            # Generate 1 to 2 payments for each order
+            for _ in range(random.randint(1, 2)):
+                payment_id = str(uuid.uuid4())  # Generate a unique UUID for PaymentID
+                payment_date = fake.date_this_year()
+                payment_amount = round(random.uniform(20, total_amount), 2)  # Payment amount should be <= total_amount
+                payments.append((payment_id, order_id, payment_date, payment_amount))
+
+            # Generate 1 shipment per order
+            shipment_id = str(uuid.uuid4())  # Generate a unique UUID for ShipmentID
+            shipment_date = fake.date_this_year()
+            carrier = fake.company()
+            tracking_number = fake.uuid4()
+            shipments.append((shipment_id, order_id, shipment_date, carrier, tracking_number))
+
+    # Insert the generated data into Cloud Spanner using batch operations
+    with database.batch() as batch:
+        # Insert customer data
+        batch.insert(
+            table='Customers',
+            columns=('CustomerID', 'FirstName', 'LastName', 'Email', 'Phone'),
+            values=customers
+        )
+
+        # Insert order data
+        batch.insert(
+            table='Orders',
+            columns=('OrderID', 'CustomerID', 'OrderDate', 'TotalAmount'),
+            values=orders
+        )
+
+        # Insert product data
+        batch.insert(
+            table='Products',
+            columns=('ProductID', 'OrderID', 'ProductName', 'Quantity', 'Price'),
+            values=products
+        )
+
+        # Insert payment data
+        batch.insert(
+            table='Payments',
+            columns=('PaymentID', 'OrderID', 'PaymentDate', 'PaymentAmount'),
+            values=payments
+        )
+
+        # Insert shipment data
+        batch.insert(
+            table='Shipments',
+            columns=('ShipmentID', 'OrderID', 'ShipmentDate', 'Carrier', 'TrackingNumber'),
+            values=shipments
+        )
+
+    print("Data inserted successfully!")
+
+# Create the tables
+create_tables()
+
+# Insert fake data into Spanner
+insert_fake_data()

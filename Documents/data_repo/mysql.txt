@@ -1,0 +1,409 @@
+northwind database:
+
+CREATE DATABASE northwind;
+USE northwind;
+
+-- 1️⃣ Categories Table
+CREATE TABLE Categories (
+    CategoryID INT AUTO_INCREMENT PRIMARY KEY,
+    CategoryName VARCHAR(255) NOT NULL,
+    Description TEXT
+);
+
+-- 2️⃣ Customers Table
+CREATE TABLE Customers (
+    CustomerID CHAR(5) PRIMARY KEY,
+    CompanyName VARCHAR(255) NOT NULL,
+    ContactName VARCHAR(255),
+    ContactTitle VARCHAR(255),
+    Address VARCHAR(255),
+    City VARCHAR(100),
+    Country VARCHAR(100)
+);
+
+-- 3️⃣ Employees Table
+CREATE TABLE Employees (
+    EmployeeID INT AUTO_INCREMENT PRIMARY KEY,
+    LastName VARCHAR(255) NOT NULL,
+    FirstName VARCHAR(255) NOT NULL,
+    Title VARCHAR(255),
+    BirthDate DATE,
+    HireDate DATE,
+    Address VARCHAR(255),
+    City VARCHAR(100),
+    Country VARCHAR(100)
+);
+
+-- 4️⃣ Orders Table
+CREATE TABLE Orders (
+    OrderID INT AUTO_INCREMENT PRIMARY KEY,
+    CustomerID CHAR(5),
+    EmployeeID INT,
+    OrderDate DATE,
+    ShipCity VARCHAR(100),
+    ShipCountry VARCHAR(100),
+    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID),
+    FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID)
+);
+
+-- 5️⃣ Products Table
+CREATE TABLE Products (
+    ProductID INT AUTO_INCREMENT PRIMARY KEY,
+    ProductName VARCHAR(255) NOT NULL,
+    SupplierID INT,
+    CategoryID INT,
+    UnitPrice DECIMAL(10,2),
+    UnitsInStock INT,
+    FOREIGN KEY (SupplierID) REFERENCES Suppliers(SupplierID),
+    FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
+);
+
+-- 6️⃣ OrderDetails Table (Many-to-Many between Orders and Products)
+CREATE TABLE OrderDetails (
+    OrderID INT,
+    ProductID INT,
+    Quantity INT,
+    UnitPrice DECIMAL(10,2),
+    Discount FLOAT DEFAULT 0,
+    PRIMARY KEY (OrderID, ProductID),
+    FOREIGN KEY (OrderID) REFERENCES Orders(OrderID) ON DELETE CASCADE,
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID) ON DELETE CASCADE
+);
+
+-- 7️⃣ Suppliers Table
+CREATE TABLE Suppliers (
+    SupplierID INT AUTO_INCREMENT PRIMARY KEY,
+    CompanyName VARCHAR(255) NOT NULL,
+    ContactName VARCHAR(255),
+    City VARCHAR(100),
+    Country VARCHAR(100)
+);
+
+#########################################################################
+#Code to generate fake records
+
+from faker import Faker
+import random
+import uuid
+
+fake = Faker()
+
+# Generate Categories
+def generate_categories(n=20):
+    return [{"CategoryID": i+1, "CategoryName": fake.word()} for i in range(n)]
+
+# Generate Customers
+def generate_customers(n=20):
+    return [{
+        "CustomerID": str(uuid.uuid4()),
+        "CustomerName": fake.name(),
+        "Contact": fake.phone_number(),
+        "Address": fake.address()
+    } for _ in range(n)]
+
+# Generate Employees
+def generate_employees(n=20):
+    return [{
+        "EmployeeID": i+1,
+        "EmployeeName": fake.name(),
+        "JobTitle": fake.job(),
+        "Email": fake.email()
+    } for i in range(n)]
+
+# Generate Products
+def generate_products(n=50):
+    return [{
+        "ProductID": i+1,
+        "ProductName": fake.word(),
+        "Price": round(random.uniform(5, 500), 2),
+        "CategoryID": random.randint(1, 20)
+    } for i in range(n)]
+
+# Generate Suppliers
+def generate_suppliers(n=20):
+    return [{
+        "SupplierID": i+1,
+        "SupplierName": fake.company(),
+        "Contact": fake.phone_number()
+    } for i in range(n)]
+
+# Generate Orders
+def generate_orders(n=200):
+    return [{
+        "OrderID": i+1,
+        "CustomerID": random.choice(customers)["CustomerID"],
+        "EmployeeID": random.randint(1, 20),
+        "OrderDate": fake.date_this_decade()
+    } for i in range(n)]
+
+# Generate OrderDetails
+def generate_order_details(n=30):
+    return [{
+        "OrderDetailID": i+1,
+        "OrderID": random.randint(1, 200),
+        "ProductID": random.randint(1, 50),
+        "Quantity": random.randint(1, 10)
+    } for i in range(n)]
+
+# Generate Data
+categories = generate_categories()
+customers = generate_customers()
+employees = generate_employees()
+products = generate_products()
+suppliers = generate_suppliers()
+orders = generate_orders()
+order_details = generate_order_details()
+
+# Print sample data
+print("Categories:", categories[:2])
+print("Customers:", customers[:2])
+print("Employees:", employees[:2])
+print("Products:", products[:2])
+print("Suppliers:", suppliers[:2])
+print("Orders:", orders[:2])
+print("OrderDetails:", order_details[:2])
+
+
+#########################################################################################################
+Modified code to add data to the database:
+
+from faker import Faker
+import random
+import uuid
+import mysql.connector
+
+fake = Faker()
+
+# MySQL connection
+conn = mysql.connector.connect(
+    host="your-cloud-sql-instance-host",
+    user="your-username",
+    password="your-password",
+    database="your-database"
+)
+cursor = conn.cursor()
+
+# Generate and insert Categories
+def generate_categories(n=20):
+    for i in range(n):
+        cursor.execute("INSERT INTO Categories (CategoryName) VALUES (%s)", (fake.word(),))
+    conn.commit()
+
+# Generate and insert Customers
+def generate_customers(n=20):
+    for _ in range(n):
+        cursor.execute("INSERT INTO Customers (CustomerID, CustomerName, Contact, Address) VALUES (%s, %s, %s, %s)",
+                       (str(uuid.uuid4()), fake.name(), fake.phone_number(), fake.address()))
+    conn.commit()
+
+# Generate and insert Employees
+def generate_employees(n=20):
+    for i in range(n):
+        cursor.execute("INSERT INTO Employees (EmployeeName, JobTitle, Email) VALUES (%s, %s, %s)",
+                       (fake.name(), fake.job(), fake.email()))
+    conn.commit()
+
+# Generate and insert Products
+def generate_products(n=50):
+    for i in range(n):
+        cursor.execute("INSERT INTO Products (ProductName, Price, CategoryID) VALUES (%s, %s, %s)",
+                       (fake.word(), round(random.uniform(5, 500), 2), random.randint(1, 20)))
+    conn.commit()
+
+# Generate and insert Suppliers
+def generate_suppliers(n=20):
+    for i in range(n):
+        cursor.execute("INSERT INTO Suppliers (SupplierName, Contact) VALUES (%s, %s)",
+                       (fake.company(), fake.phone_number()))
+    conn.commit()
+
+# Generate and insert Orders
+def generate_orders(n=200):
+    cursor.execute("SELECT CustomerID FROM Customers")
+    customer_ids = [row[0] for row in cursor.fetchall()]
+    
+    for i in range(n):
+        cursor.execute("INSERT INTO Orders (CustomerID, EmployeeID, OrderDate) VALUES (%s, %s, %s)",
+                       (random.choice(customer_ids), random.randint(1, 20), fake.date_this_decade()))
+    conn.commit()
+
+# Generate and insert OrderDetails
+def generate_order_details(n=30):
+    cursor.execute("SELECT OrderID FROM Orders")
+    order_ids = [row[0] for row in cursor.fetchall()]
+    
+    cursor.execute("SELECT ProductID FROM Products")
+    product_ids = [row[0] for row in cursor.fetchall()]
+    
+    for i in range(n):
+        cursor.execute("INSERT INTO OrderDetails (OrderID, ProductID, Quantity) VALUES (%s, %s, %s)",
+                       (random.choice(order_ids), random.choice(product_ids), random.randint(1, 10)))
+    conn.commit()
+
+# Generate Data
+generate_categories()
+generate_customers()
+generate_employees()
+generate_products()
+generate_suppliers()
+generate_orders()
+generate_order_details()
+
+# Close connection
+cursor.close()
+conn.close()
+
+#############################################################################
+# complete code to create table and write data in the table:
+
+from faker import Faker
+import random
+import uuid
+import mysql.connector
+
+fake = Faker()
+
+# MySQL connection
+conn = mysql.connector.connect(
+    host="your-cloud-sql-instance-host",
+    user="your-username",
+    password="your-password"
+)
+cursor = conn.cursor()
+
+# Create Database and Tables
+def create_database():
+    cursor.execute("CREATE DATABASE IF NOT EXISTS your_database")
+    cursor.execute("USE your_database")
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS Categories (
+        CategoryID INT AUTO_INCREMENT PRIMARY KEY,
+        CategoryName VARCHAR(255) NOT NULL
+    )
+    """)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS Customers (
+        CustomerID VARCHAR(36) PRIMARY KEY,
+        CustomerName VARCHAR(255) NOT NULL,
+        Contact VARCHAR(50),
+        Address TEXT
+    )
+    """)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS Employees (
+        EmployeeID INT AUTO_INCREMENT PRIMARY KEY,
+        EmployeeName VARCHAR(255) NOT NULL,
+        JobTitle VARCHAR(255),
+        Email VARCHAR(255)
+    )
+    """)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS Products (
+        ProductID INT AUTO_INCREMENT PRIMARY KEY,
+        ProductName VARCHAR(255) NOT NULL,
+        Price DECIMAL(10,2),
+        CategoryID INT,
+        FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
+    )
+    """)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS Suppliers (
+        SupplierID INT AUTO_INCREMENT PRIMARY KEY,
+        SupplierName VARCHAR(255) NOT NULL,
+        Contact VARCHAR(50)
+    )
+    """)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS Orders (
+        OrderID INT AUTO_INCREMENT PRIMARY KEY,
+        CustomerID VARCHAR(36),
+        EmployeeID INT,
+        OrderDate DATE,
+        FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID),
+        FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID)
+    )
+    """)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS OrderDetails (
+        OrderDetailID INT AUTO_INCREMENT PRIMARY KEY,
+        OrderID INT,
+        ProductID INT,
+        Quantity INT,
+        FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
+        FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+    )
+    """)
+    conn.commit()
+
+# Call database creation function
+create_database()
+
+# Generate and insert Categories
+def generate_categories(n=20):
+    for i in range(n):
+        cursor.execute("INSERT INTO Categories (CategoryName) VALUES (%s)", (fake.word(),))
+    conn.commit()
+
+# Generate and insert Customers
+def generate_customers(n=20):
+    for _ in range(n):
+        cursor.execute("INSERT INTO Customers (CustomerID, CustomerName, Contact, Address) VALUES (%s, %s, %s, %s)",
+                       (str(uuid.uuid4()), fake.name(), fake.phone_number(), fake.address()))
+    conn.commit()
+
+# Generate and insert Employees
+def generate_employees(n=20):
+    for i in range(n):
+        cursor.execute("INSERT INTO Employees (EmployeeName, JobTitle, Email) VALUES (%s, %s, %s)",
+                       (fake.name(), fake.job(), fake.email()))
+    conn.commit()
+
+# Generate and insert Products
+def generate_products(n=50):
+    for i in range(n):
+        cursor.execute("INSERT INTO Products (ProductName, Price, CategoryID) VALUES (%s, %s, %s)",
+                       (fake.word(), round(random.uniform(5, 500), 2), random.randint(1, 20)))
+    conn.commit()
+
+# Generate and insert Suppliers
+def generate_suppliers(n=20):
+    for i in range(n):
+        cursor.execute("INSERT INTO Suppliers (SupplierName, Contact) VALUES (%s, %s)",
+                       (fake.company(), fake.phone_number()))
+    conn.commit()
+
+# Generate and insert Orders
+def generate_orders(n=200):
+    cursor.execute("SELECT CustomerID FROM Customers")
+    customer_ids = [row[0] for row in cursor.fetchall()]
+    
+    for i in range(n):
+        cursor.execute("INSERT INTO Orders (CustomerID, EmployeeID, OrderDate) VALUES (%s, %s, %s)",
+                       (random.choice(customer_ids), random.randint(1, 20), fake.date_this_decade()))
+    conn.commit()
+
+# Generate and insert OrderDetails
+def generate_order_details(n=30):
+    cursor.execute("SELECT OrderID FROM Orders")
+    order_ids = [row[0] for row in cursor.fetchall()]
+    
+    cursor.execute("SELECT ProductID FROM Products")
+    product_ids = [row[0] for row in cursor.fetchall()]
+    
+    for i in range(n):
+        cursor.execute("INSERT INTO OrderDetails (OrderID, ProductID, Quantity) VALUES (%s, %s, %s)",
+                       (random.choice(order_ids), random.choice(product_ids), random.randint(1, 10)))
+    conn.commit()
+
+# Generate Data
+generate_categories()
+generate_customers()
+generate_employees()
+generate_products()
+generate_suppliers()
+generate_orders()
+generate_order_details()
+
+# Close connection
+cursor.close()
+conn.close()
