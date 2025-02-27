@@ -1,99 +1,66 @@
 import json
-import random
-import fastavro
 from faker import Faker
-from datetime import datetime
+import random
+from datetime import datetime, timedelta
 
 # Initialize Faker
 fake = Faker()
 
-# Number of files and records per file
-num_files = 10
-records_per_file = 500
+# Function to generate a random policy holder address
+def generate_address():
+    return {
+        "street": fake.street_address(),
+        "city": fake.city(),
+        "state": fake.state(),
+        "postal_code": fake.zipcode(),
+        "country": fake.country()
+    }
 
-# Define Avro Schema for Banking Transactions
-avro_schema = {
-    "type": "record",
-    "name": "BankTransaction",
-    "namespace": "com.example.banking",
-    "fields": [
-        {"name": "transaction_id", "type": "string"},
-        {"name": "account_number", "type": "string"},
-        {"name": "account_holder", "type": "string"},
-        {"name": "bank_name", "type": "string"},
-        {"name": "transaction_type", "type": {"type": "enum", "name": "TransactionType", "symbols": ["Deposit", "Withdrawal", "Transfer", "Payment"]}},
-        {"name": "transaction_amount", "type": "float"},
-        {"name": "currency", "type": "string"},
-        {"name": "transaction_date", "type": "long", "logicalType": "timestamp-millis"},
-        {"name": "transaction_status", "type": {"type": "enum", "name": "TransactionStatus", "symbols": ["Success", "Failed", "Pending"]}},
-        {"name": "merchant_details", "type": ["null", 
-            {
-                "type": "record",
-                "name": "MerchantDetails",
-                "fields": [
-                    {"name": "merchant_name", "type": "string"},
-                    {"name": "merchant_category", "type": "string"}
-                ]
-            }
-        ], "default": None},
-        {"name": "location", "type": "string"},
-        {"name": "reference_number", "type": ["null", "string"], "default": None},
-        {"name": "remarks", "type": ["null", "string"], "default": None}
-    ]
-}
+# Function to generate a random beneficiary
+def generate_beneficiary():
+    return {
+        "first_name": fake.first_name(),
+        "last_name": fake.last_name(),
+        "relationship": random.choice(["Spouse", "Child", "Parent", "Siblings", "Friend"]),
+        "percentage": random.randint(1, 100)
+    }
 
-# Updated records: now as dictionaries instead of lists
-records = [
-    {
-        "transaction_id": '123e4567-e89b-12d3-a456-426614174000',
-        "account_number": 'GB29XABC10161234567801',
-        "account_holder": 'John Doe',
-        "bank_name": 'ACME Bank',
-        "transaction_type": 'Deposit',
-        "transaction_amount": 253.76,
-        "currency": 'USD',
-        "transaction_date": 1637178329000,
-        "transaction_status": 'Success',
-        "merchant_details": {'merchant_name': 'TechStore', 'merchant_category': 'Electronics'},
-        "location": 'London',
-        "reference_number": 'c9b9b2ad-b5b7-4b85-b8d7-0e71b96bc3a3',
-        "remarks": 'Payment for invoice #12345'
-    },
-    {
-        "transaction_id": '789e4567-e89b-12d3-a456-426614174001',
-        "account_number": 'DE44XABC10161234567802',
-        "account_holder": 'Jane Smith',
-        "bank_name": 'Global Bank',
-        "transaction_type": 'Withdrawal',
-        "transaction_amount": 500.65,
-        "currency": 'EUR',
-        "transaction_date": 1637178345000,
-        "transaction_status": 'Failed',
-        "merchant_details": None,
-        "location": 'Paris',
-        "reference_number": None,
-        "remarks": 'Failed transaction, insufficient funds'
-    },
-    {
-        "transaction_id": '456e4567-e89b-12d3-a456-426614174002',
-        "account_number": 'US34XABC10161234567803',
-        "account_holder": 'Alice Brown',
-        "bank_name": 'American Bank',
-        "transaction_type": 'Transfer',
-        "transaction_amount": 1000.0,
-        "currency": 'USD',
-        "transaction_date": 1637178361000,
-        "transaction_status": 'Success',
-        "merchant_details": {'merchant_name': 'MegaRetail', 'merchant_category': 'Retail'},
-        "location": 'New York',
-        "reference_number": 'f1b1b2ad-b5b7-4b85-b8d7-1e71b96bc3a4',
-        "remarks": 'Transfer for invoice #67890'
-    },
-    # ... other records
-]
+# Function to generate a random insurance policy
+def generate_policy():
+    policy_id = fake.uuid4()
+    policy_holder = {
+        "first_name": fake.first_name(),
+        "last_name": fake.last_name(),
+        "dob": fake.date_of_birth(tzinfo=None, minimum_age=18, maximum_age=80).strftime("%Y-%m-%d"),
+        "address": generate_address()
+    }
+    policy_type = random.choice(["Life", "Health", "Auto", "Home", "Travel"])
+    coverage_amount = round(random.uniform(5000.00, 500000.00), 2)
+    premium_amount = round(random.uniform(100.00, 2000.00), 2)
+    start_date = fake.date_this_decade().strftime("%Y-%m-%d")
+    end_date = (datetime.strptime(start_date, "%Y-%m-%d") + timedelta(days=random.randint(365, 3650))).strftime("%Y-%m-%d")
+    
+    beneficiaries = [generate_beneficiary() for _ in range(random.randint(1, 3))]  # Randomly assign 1 to 3 beneficiaries
 
-# Open and write the Avro file
-with open("/home/roshan/python_dev/Data-Science/dev/gcp_code/gcp_avro.avro", "wb") as f:
-    fastavro.writer(f, avro_schema, records)
+    return {
+        "policy_id": policy_id,
+        "policy_holder": policy_holder,
+        "policy_type": policy_type,
+        "coverage_amount": coverage_amount,
+        "premium_amount": premium_amount,
+        "policy_start_date": start_date,
+        "policy_end_date": end_date,
+        "beneficiaries": beneficiaries
+    }
 
-print("Avro file created successfully!")
+# Generate 10 sample records and store them in a list
+sample_records = [generate_policy() for _ in range(10)]
+
+# Print the list of records
+print(sample_records)
+
+# Optionally, you can save them to a file
+with open("insurance_policies.json", "w") as f:
+    json.dump(sample_records, f, indent=2)
+
+print("Sample records generated and saved to 'insurance_policies.json'")
