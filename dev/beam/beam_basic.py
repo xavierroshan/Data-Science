@@ -203,10 +203,9 @@ with beam.Pipeline() as pipeline:
               #|'Find max' >> beam.CombineGlobally(lambda x: max(x))
               #|'Find min' >> beam.CombineGlobally(lambda x: min(x))
               #|'Find mean' >> beam.combiners.Mean.Globally()
-              |'Find count' >> beam.combiners.Count.Globally()          
-              | 'print csv' >> beam.Map(print)       
+              #|'Find count' >> beam.combiners.Count.Globally()  
+              | 'print csv' >> beam.io.WriteToText("output.txt")      
               )
-
 
 
 

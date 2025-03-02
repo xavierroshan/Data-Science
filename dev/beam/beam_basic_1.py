@@ -17,14 +17,15 @@ with beam.Pipeline() as pipeline:
                     |'convert to int' >> beam.ParDo(convert_to_int())
       )
 
-#show sum, max, min, mean, Count
+# #show sum, max, min, mean, Count
       Total_salary = (
               salary_data 
-              |'Extract salary' >> beam.Map (lambda x:x[3])
-              #|'Add salary' >> beam.CombineGlobally(lambda x:sum(x))   
-              #|'Find max' >> beam.CombineGlobally(lambda x: max(x))
-              #|'Find min' >> beam.CombineGlobally(lambda x: min(x))
-              #|'Find mean' >> beam.combiners.Mean.Globally()
-              |'Find count' >> beam.combiners.Count.Globally()          
+              |'Extract salary' >> beam.Map (lambda x:(x[4],x[3])) 
+              #|'Sum Salaries' >> beam.CombinePerKey(sum) 
+              #|'Max Salaries' >> beam.CombinePerKey(max) 
+              #|'Min Salary' >> beam.CombinePerKey(min)
+              #|'Mean Salary' >> beam.CombinePerKey(beam.combiners.MeanCombineFn())
+              #| 'count per key' >> beam.combiners.Count.PerKey()    
+              #| 'mean per key' >> beam.combiners.Minimum.Globally()  
               | 'print csv' >> beam.Map(print)       
               )
