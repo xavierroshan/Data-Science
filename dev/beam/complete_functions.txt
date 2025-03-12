@@ -15,26 +15,17 @@ beam.combiners.Mean.PerKey(): Computes the mean per key.
 beam.Create(elements): Creates a PCollection from an in-memory iterable.
 beam.io.ReadFromText(file_pattern, ...): Reads data from text files.
 beam.io.WriteToText(file_path_prefix, ...): Writes data to text files.
-
-
-
-
-
+beam.combiners.Count(): Counts the number of elements in a PCollection. -> goes with Globally() or PerKey()
+beam.combiners.Sum(): Sums the elements in a PCollection. -> goes with Globally() or PerKey()
+beam.combiners.Maximum(): Finds the maximum element. -> goes with Globally() or PerKey()
+beam.combiners.Minimum(): Finds the minimum element. -> goes with Globally() or PerKey()
 
 beam.FlatMap(func): Applies a 1-to-many mapping function to each element in a PCollection.
 beam.GroupByKey(): Groups elements in a PCollection of key-value pairs by key.
 beam.Flatten(pcollections): Flattens multiple PCollections into a single PCollection.
 beam.Partition(partition_fn, num_partitions): Partitions a PCollection into multiple PCollections.
 beam.Reshard(): Redistributes elements in a PCollection to improve parallelism.
-beam.combiners.Count(): Counts the number of elements in a PCollection.
-beam.combiners.Sum(): Sums the elements in a PCollection.
-beam.combiners.Sum.PerKey(): Sums elements per key.
-beam.combiners.Maximum(): Finds the maximum element.
-beam.combiners.Maximum.Globally(): Finds the global maximum.
-beam.combiners.Maximum.PerKey(): Finds the maximum per key.
-beam.combiners.Minimum(): Finds the minimum element.
-beam.combiners.Minimum.Globally(): Finds the global minimum.
-beam.combiners.Minimum.PerKey(): Finds the minimum per key.
+
 beam.combiners.ToList(): Collects elements into a list.
 beam.combiners.ToList.Globally(): Collects all elements into a global list.
 beam.combiners.ToList.PerKey(): Collects elements into a list per key.
@@ -44,14 +35,17 @@ beam.combiners.ToDict.PerKey(): Collects key-value pairs into a dictionary per k
 beam.combiners.Sample.FixedSizeGlobally(n): Samples a fixed number of elements globally.
 beam.combiners.Sample.FixedSizePerKey(n): Samples a fixed number of elements per key.
 beam.combiners.Latest(): returns the latest value.
+
 beam.window.FixedWindows(size): Groups elements into fixed-size time windows.
 beam.window.SlidingWindows(size, slide): Groups elements into sliding time windows.
 beam.window.Sessions(gap_size): Groups elements into session windows based on gaps in event times.
 beam.window.GlobalWindows(): Groups all elements into a single global window.
+
 beam.pvalue.AsList(pcollection): Converts a PCollection to a list for use as a side input.
 beam.pvalue.AsDict(pcollection): Converts a PCollection to a dictionary for use as a side input.
 beam.pvalue.AsSingleton(pcollection): converts a pcollection to a single value.
 beam.pvalue.AsIter(pcollection): converts a pcollection to an iterable.
+
 beam.io.ReadFromAvro(file_pattern, schema): Reads data from Avro files.
 beam.io.WriteToAvro(file_path_prefix, schema): Writes data to Avro files.
 beam.io.ReadFromBigQuery(query, ...): Reads data from BigQuery.
