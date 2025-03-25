@@ -1,0 +1,49 @@
+1. Understand Linux password manager with pass (the standard linux password manager
+username & email for password manager is : roshan && xavier.roshan@gmail.com
+username for docker desktop is google authentication
+
+Very important tips: 
+
+
+
+1. please note that in VM installed in a KVM mouse will not work unless gpm (general purpose mouse is installed
+Steps below::
+so if you’re running the VM in a text-only (TTY) mode without a graphical desktop, the mouse won’t work by default because TTY interfaces don’t support mouse input unless you’re using a tool like gpm (General Purpose Mouse).
+Steps:
+Install gpm in the VM: sudo apt install gpm
+Start the gpm service: sudo systemctl start gpm
+
+
+2. MySQL port forwarding
+
+I have mapped port 3307 (usually it is 3306, but I have used 3307) on my local machine to 3306 of the pod with mysql server. So i need to use this connection to connect to pod from local machine
+
+roshan@roshan:/opt/custom_config$ kubectl port-forward pod/mysql-0 3307:3306
+Forwarding from 127.0.0.1:3307 -> 3306
+Forwarding from [::1]:3307 -> 3306
+Handling connection for 3307
+
+Command to access mysql in kubernetes from local machine: mysql -h 127.0.0.1 -P 3307 -u roshan -p
+
+3. Kafka port forwarding
+roshan@roshan:/opt/custom_config$ kubectl port-forward kafka-controller-0 9092:9092
+Forwarding from 127.0.0.1:9092 -> 9092
+Forwarding from [::1]:9092 -> 9092
+
+
+4. Starting the k3s cluster: sudo systemctl start k3s
+5. sudo kubectl get pod
+6. sudo kubectl get svc
+7. mysql -h <ip of mysql service> u roshan -p
+
+
+
+Softwares to be removed
+
+virtualbox
+kvm qemu
+k3c
+mysql
+java
+
+

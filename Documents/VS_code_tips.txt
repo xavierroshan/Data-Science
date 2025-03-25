@@ -1,0 +1,4 @@
+VSCode tips
+
+to enable auto complete select as per the screenshot named enable autocomplete
+Good resource on python patterns: #https://refactoring.guru/design-patterns/python

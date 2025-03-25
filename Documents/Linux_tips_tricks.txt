@@ -1,0 +1,18 @@
+| && grep sort cat
+
+ps aux | grep notepad
+ls | grep kafka
+ls /home/roshan/Data-Science/Documents -l > piping.txt
+cat piping.txt | sort
+cat piping.txt | sort | grep llab
+cd /home/roshan/Data-Science && cat employees.csv | grep Frank
+cd /home/roshan/Data-Science && cat thresholds.csv
+cd /home/roshan/Data-Science && cat thresholds.csv | sort
+
+
+
+
+
+
+
+

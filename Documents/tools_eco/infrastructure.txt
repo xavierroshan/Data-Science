@@ -1,0 +1,12 @@
+1. I have installed a k3s cluster on my local machine
+2. In the cluster I have installed kafka and spark
+    -- In case of both spark and kafka i am able to get into the pod.
+    -- In case os kafka i am able to get into the pod using commad line and create a message. I am also able to produce and consumer from within the pod
+	-- I am able to do this in kafka from by local machin eusing command line
+	-- In case of spark i am able to get into the pod and run a hello world python script 
+	-- I am also able to create a pythin script and run hello world from local machine. But for some reason I am not able to connect to pod from my local machine using cli
+3. I have also installed mysql server on my local machine and have connected this my sql using dbeaver
+4. Installed Google Cloud SDK on my local machine
+5. I have installed spark in a docker container (connecting to this is TBD)
+6. I have installed redis in a docker container 
+7. I have installed mongodb on docker container. I have installed a mongod client on my local machine as well
