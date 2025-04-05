@@ -1,0 +1,26 @@
+Steps to install raspberry Pi
+
+1. Insert the sd card and wipe it clean
+
+a. lsblk -> find the drive and partition. On my machine it was showing up as dev/sda and had three partitions sda1,sda2 and sda3
+b. umount sda1, umount sda2, and umount sda3 -> unmount all the partitions
+c. sudo fsdisk dev/sda -> to launch the utility to manage the disk
+d. delete all partitions and created a new partition
+   Press d (delete partitions) until no partitions remain.
+   Press n (new partition), choose primary, default sizes.
+   Press w (write changes).
+e. By default the partition format is 83 Linux; need to chnage this to FAT32 (W95 FAT32 (LBA)
+   Press t → Change partition type.
+   Press b → Select W95 FAT32 (LBA).
+   Press p → Verify that the partition type has changed to b W95 FAT32 (LBA).
+   Press w → Write changes and exit.
+f. sudo mkfs.vfat -F32 /dev/sda1  -> format the partition as FAT32
+
+2. Install Raspberry Pi Imager 
+  sudo apt update
+  sudo apt install rpi-imager
+  
+3. rpi-imager (UI is launched. follow the steps to copy files to sd card
+
+
+

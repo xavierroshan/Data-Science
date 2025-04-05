@@ -1,0 +1,62 @@
+- If you are not able to connect to mysql from Dbeaver, it could be because of authentication mode. change it to native_password mode 
+- There types of table in information_schema.tables is base, view, system view and external. External table is a table whete data is stored externally in a file or other storage source. only metadata is stored here. possible to query s3, GCS or remote mysql (using mysql's federated storage engine). needs to be explored further.
+
+
+Detailed explanation of how communication happens between mysql and client
+
+Following files are located in machine that runs mysql /var/lib/mysql: ca.pem, server-cert.pem, server-key.pem, private_key.pem and public_key.pem
+
+A. usecase - SSL/TLS Encryption: Using server-key.pem (with related SSL files) to encrypt the connection between a MySQL client and server.
+
+
+1. Server configuration
+
+a. Enable SSL: edit /etc/mysql/my.cnf
+
+[mysqld]
+ssl_ca=/var/lib/mysql/ca.pem
+ssl_cert=/var/lib/mysql/server-cert.pem
+ssl_key=/var/lib/mysql/server-key.pem
+
+b. Enable RSA Keys: MySQL auto-generates private_key.pem and public_key.pem if caching_sha2_password_auto_generate_rsa_keys=ON
+
+c. restart mysql
+sudo systemctl restart mysql
+
+d. Verify SSL and RSA
+SHOW VARIABLES LIKE '%ssl%';
+SHOW VARIABLES LIKE '%public_key%';
+
+2. Client preparation
+
+a. Create a user requiring SSL and caching_sha2_password
+CREATE USER 'roshan'@'localhost' IDENTIFIED WITH 'caching_sha2_password' BY 'secure_password' REQUIRE SSL;
+GRANT SELECT ON company.* TO 'roshan'@'localhost';
+
+b. Copy ca.pem to the client machine @ /home/roshan/ca.pem for SSL validation
+
+3. Connection
+
+a. client initiates connection
+mysql -u roshan -p --ssl-ca=/home/roshan/ca.pem --ssl-mode=VERIFY_CA -h localhost
+
+b. Server responds
+mySQL server presents server-cert.pem (signed by ca.pem) to the client. Client verifies the certificate using ca.pem.
+
+c.  TLS handshake
+Server: Uses server-key.pem (private key) to negotiate a symmetric encryption key with the client.
+Client: Uses the public key embedded in server-cert.pem to encrypt handshake messages.
+Result: A secure, encrypted channel is established using a shared session key (e.g., AES)
+
+d. password authentication
+Client sends the password (secure_password) encrypted via the TLS channel.
+Server decrypts it internally (no RSA keys needed here since TLS is active).
+
+Client                  Server
+  |---Client Hello----->| (client_random)
+  |<---Server Hello-----| (server_random, server-cert.pem)
+  |---Key Exchange----->| (pre-master secret, signed by server-key.pem)
+  |<---Handshake Done---| (both compute session key)
+  |---Encrypted Data--->| (session key: AES-256)
+copy-paste this flow in llm to get more details.
+

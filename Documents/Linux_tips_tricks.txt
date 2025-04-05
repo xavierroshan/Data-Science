@@ -9,6 +9,58 @@ cd /home/roshan/Data-Science && cat employees.csv | grep Frank
 cd /home/roshan/Data-Science && cat thresholds.csv
 cd /home/roshan/Data-Science && cat thresholds.csv | sort
 
+> >> <>
+cat Syllabus.txt > test.txt
+echo "-------------------" >> test.txt
+cat Syllabus.txt >> test.txt
+sort < test.txt > test1.txt
+
+
+!!
+use sudo !! -> when you missed typing sudo
+
+
+ps
+ps -aux
+ps -a
+ps -u
+ps -x
+ps -e
+ps -eo pid,eusr,ruser,comm
+
+Shortcut
+
+ctrl + L
+ctrl + a
+ctrl + e
+ctrl + u
+
+
+lsof
+
+lsof -i
+lsof -iroshan@roshan:/var/lib$ cd mysql
+bash: cd: mysql: Permission denied
+roshan@roshan:/var/lib$ 
+ :80
+lsof -i :443
+lsof -u roshan
+lsof -p pid
+
+ctrl + TZ
+fg
+
+ls -d /path to folder/files - permissions
+
+sudo -i  -  opes a root shell
+cd /var/lib/mysel
+ls
+exit
+
+
+
+
+
 
 
 

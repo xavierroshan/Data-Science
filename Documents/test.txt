@@ -1,0 +1,23 @@
+Cloud Storage
+Data transfer Services
+Cloud Block Storage and Fie Storage
+Cloud SQL
+Cloud Spanner
+NoSQLs
+Cloud Firestore and datastore
+Cloud Memory Storage
+Cloud Bigtable
+Cloud Big Query
+PubSub
+Dataflow
+Dataproc
+Data Fusion
+Composer - Apache Airflow
+DLP - Data Loss prevention API
+Data Catalog
+Apache Beam
+Bigquery - Dataset and tables
+Bigquery - Partition table and clustering
+Bigquery with python
+Data studio
+Machine lerning

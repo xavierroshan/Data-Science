@@ -1,0 +1,68 @@
+check network interfaces: ip a
+check docker interfaces: ip a show docker0
+ping docker network: ping -c 4 172.17.0.1
+
+create two containers
+docker run -d --rm --name ,<container_name1> alpine sleep 300
+docker run -d --rm --name ,<container_name2> alpine sleep 300
+
+get into the container
+docker exec -it <container_name1_or_id> sh
+docker exec -it <container_name2_or_id> sh
+
+find the ip of conatainers
+docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <container_name1>
+docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <container_name1>
+
+ping containers
+ping 4 172.17.0.1
+ping 4 172.17.0.3
+
+
+iproute show
+default via 192.168.2.1 dev wlo1   proto dhcp src 192.168.2.48 metric 600
+            gateway     interface  add by      your machine
+nslookup google.com
+
+
+ip addr -> find ip address of the machine and subnet
+route -n -> ip of gateway and ip of network
+ip route -> machine ip, gateway ip and network ip
+
+
+ip link -> like ip addr gives the inerface list
+sudo iw dev wlxa047d77236b8 scan | grep SSID  -> scan for wirelessnetwork
+nmcli dev wifi connect "your SSID" password "your password" ifname "your interface name"
+
+nmcli --> network interfaces with SSID connected to
+nmcli dev status -> device/intefaces and connection details
+nmcli con show --active -> show active connection 
+nmcli dev disconnect <interfacename>
+
+nmcli dev disconnect wlxa047d77236b8
+
+iw list  --- to find out if AP (Access Point), is a supported interface
+
+
+
+
+
+Done the following: 
+
+created the file
+/etc/sysctl.d/99-sysctl.confs
+
+and applied the file:
+sudo sysctl -p /etc/sysctl.d/99-sysctl.conf
+
+
+
+sudo iptables -A FORWARD -i wlxa047d77236b8 -o wlo1 -j ACCEPT  # Outgoing
+sudo iptables -t nat -A POSTROUTING -o wlo1 -j MASQUERADE  # NAT
+sudo iptables -A FORWARD -i wlo1 -o wlxa047d77236b8 -m state --state RELATED,ESTABLISHED -j ACCEPT  # Return
+
+
+
+
+
+

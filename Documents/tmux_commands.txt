@@ -1,0 +1,14 @@
+1. tmux new -s mysession
+2. ctrl +B then D
+3. tmux ls
+4. tmux attach -t mysession
+5. Ctrl + B then D
+6. Ctrl +B then "
+7. Ctrl +B then %
+8. Ctrl +B arrow
+9. Ctrl +B Ctrl +arrow
+10. Ctrl+B then C
+11. Ctrl +B then 0-9
+12. Ctrl +B then N
+13. Ctrl +B then P
+14. tmux kill-session -t mysession
