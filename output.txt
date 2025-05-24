@@ -1,4 +1,0 @@
-    order_id  ...                                   shipment_details
-0  ORD123456  ...  {'carrier': 'FedEx', 'tracking_number': 'FDX98...
-
-[1 rows x 17 columns]

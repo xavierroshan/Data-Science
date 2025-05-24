@@ -1,5 +1,5 @@
-# import apache_beam as beam
-# from apache_beam.runners.interactive import interactive_runner
+import apache_beam as beam
+from apache_beam.runners.interactive import interactive_runner
 
 
 
@@ -96,17 +96,23 @@
 
 
 # with beam.Pipeline() as pipeline:
-#     data = ['  Alice  ', ' Bob ', '  Charlie ', '  ']
+#     data = ['  Alice  ', ' Bob ',  '  ', '  Charlie ', '  ']
+
+    
 
 #     result = (
 #         pipeline
 #         | 'Create Data' >> beam.Create(data)
 #         | 'Remove Whitespaces' >> beam.Map(lambda x: x.strip())
+#         | 'Filter Empty Strings' >> beam.Filter(lambda x: x != "")
 #         | 'Print Results' >> beam.Map(print)
 #     )
 
 
 # print("*****************************************************")
+
+
+
 
 # with beam.Pipeline() as pipeline:
 
@@ -115,30 +121,30 @@
 #         |'create a string' >> beam.Create([" Hello World "])
 #         |'remove spaces' >> beam.Map(lambda x: x.strip())
 #         |'print output'  >> beam.Map(print)
-    # )
-
-#print("*****************************************************")
-
-
-# #example with custome function
-# import apache_beam as beam
-
-# def convert_to_int(element):
-#         element[0] = int(element[0])
-#         element[2] = int(element[2])
-#         element[3] = float(element[3])
-#         return(element)
-
-# with beam.Pipeline() as pipeline:
-#     lines = (
-#         pipeline
-#         |'Read CSV' >> beam.io.ReadFromText('test_file.csv', skip_header_lines=1)
-#         |'split the string by delimiter' >> beam.Map(lambda x: x.split(','))
-#         |'convert to int' >> beam.Map(convert_to_int)
-#         | 'print csv' >> beam.Map(print)
 #     )
 
-#print("*****************************************************")
+# print("*****************************************************")
+
+
+#example with custome function
+import apache_beam as beam
+
+def convert_to_int(element):
+        element[0] = int(element[0])
+        element[2] = int(element[2])
+        element[3] = float(element[3])
+        return(element)
+
+with beam.Pipeline() as pipeline:
+    lines = (
+        pipeline
+        |'Read CSV' >> beam.io.ReadFromText('test_file.csv', skip_header_lines=1)
+        |'split the string by delimiter' >> beam.Map(lambda x: x.split(','))
+        |'convert to int' >> beam.Map(convert_to_int)
+        | 'print csv' >> beam.Map(print)
+    )
+
+print("*****************************************************")
 
 
 # # Example with Pardo and DoFn class

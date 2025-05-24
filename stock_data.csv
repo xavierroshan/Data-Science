@@ -1,0 +1,231 @@
+Symbol,All Time High,Current Price
+AAPL,"Ticker
+AAPL    259.814335
+dtype: float64","Ticker
+AAPL    198.289993
+Name: 2025-04-22 00:00:00, dtype: float64"
+AMD,"Ticker
+AMD    227.300003
+dtype: float64","Ticker
+AMD    85.330002
+Name: 2025-04-22 00:00:00, dtype: float64"
+AMAT,"Ticker
+AMAT    254.215767
+dtype: float64","Ticker
+AMAT    136.770004
+Name: 2025-04-22 00:00:00, dtype: float64"
+AMZN,"Ticker
+AMZN    242.520004
+dtype: float64","Ticker
+AMZN    172.339996
+Name: 2025-04-22 00:00:00, dtype: float64"
+ASML,"Ticker
+ASML    1105.471053
+dtype: float64","Ticker
+ASML    631.669983
+Name: 2025-04-22 00:00:00, dtype: float64"
+AVGO,"Ticker
+AVGO    250.449082
+dtype: float64","Ticker
+AVGO    167.320007
+Name: 2025-04-22 00:00:00, dtype: float64"
+AXP,"Ticker
+AXP    325.190418
+dtype: float64","Ticker
+AXP    251.589996
+Name: 2025-04-22 00:00:00, dtype: float64"
+BDX,"Ticker
+BDX    279.145563
+dtype: float64","Ticker
+BDX    199.169998
+Name: 2025-04-22 00:00:00, dtype: float64"
+BWA,"Ticker
+BWA    50.772676
+dtype: float64","Ticker
+BWA    26.82
+Name: 2025-04-22 00:00:00, dtype: float64"
+CDNS,"Ticker
+CDNS    328.98999
+dtype: float64","Ticker
+CDNS    256.560089
+Name: 2025-04-22 00:00:00, dtype: float64"
+CI,"Ticker
+CI    367.474392
+dtype: float64","Ticker
+CI    324.769989
+Name: 2025-04-21 00:00:00, dtype: float64"
+CMCSA,"Ticker
+CMCSA    55.555294
+dtype: float64","Ticker
+CMCSA    33.990002
+Name: 2025-04-22 00:00:00, dtype: float64"
+CMG,"Ticker
+CMG    69.261398
+dtype: float64","Ticker
+CMG    46.950001
+Name: 2025-04-22 00:00:00, dtype: float64"
+COST,"Ticker
+COST    1078.22998
+dtype: float64","Ticker
+COST    975.02002
+Name: 2025-04-22 00:00:00, dtype: float64"
+CRWD,"Ticker
+CRWD    455.589996
+dtype: float64","Ticker
+CRWD    365.160004
+Name: 2025-04-22 00:00:00, dtype: float64"
+GOOG,"Ticker
+GOOG    208.462496
+dtype: float64","Ticker
+GOOG    152.729996
+Name: 2025-04-22 00:00:00, dtype: float64"
+GS,"Ticker
+GS    668.873291
+dtype: float64","Ticker
+GS    518.150024
+Name: 2025-04-22 00:00:00, dtype: float64"
+HD,"Ticker
+HD    434.31221
+dtype: float64","Ticker
+HD    354.190002
+Name: 2025-04-22 00:00:00, dtype: float64"
+INTU,"Ticker
+INTU    712.348423
+dtype: float64","Ticker
+INTU    581.825012
+Name: 2025-04-22 00:00:00, dtype: float64"
+JNJ,"Ticker
+JNJ    170.8659
+dtype: float64","Ticker
+JNJ    157.5
+Name: 2025-04-22 00:00:00, dtype: float64"
+LLY,"Ticker
+LLY    969.251584
+dtype: float64","Ticker
+LLY    823.179993
+Name: 2025-04-22 00:00:00, dtype: float64"
+LOW,"Ticker
+LOW    284.554219
+dtype: float64","Ticker
+LOW    219.179993
+Name: 2025-04-22 00:00:00, dtype: float64"
+LRCX,"Ticker
+LRCX    112.315103
+dtype: float64","Ticker
+LRCX    62.91
+Name: 2025-04-22 00:00:00, dtype: float64"
+MA,"Ticker
+MA    581.308005
+dtype: float64","Ticker
+MA    525.86908
+Name: 2025-04-22 00:00:00, dtype: float64"
+MDT,"Ticker
+MDT    120.960872
+dtype: float64","Ticker
+MDT    83.360001
+Name: 2025-04-22 00:00:00, dtype: float64"
+MCO,"Ticker
+MCO    530.931857
+dtype: float64","Ticker
+MCO    427.654999
+Name: 2025-04-22 00:00:00, dtype: float64"
+META,"Ticker
+META    740.251419
+dtype: float64","Ticker
+META    496.535004
+Name: 2025-04-22 00:00:00, dtype: float64"
+MET,"Ticker
+MET    88.482311
+dtype: float64","Ticker
+MET    72.870003
+Name: 2025-04-22 00:00:00, dtype: float64"
+MS,"Ticker
+MS    142.029999
+dtype: float64","Ticker
+MS    106.300003
+Name: 2025-04-21 00:00:00, dtype: float64"
+MSFT,"Ticker
+MSFT    465.639777
+dtype: float64","Ticker
+MSFT    364.640015
+Name: 2025-04-22 00:00:00, dtype: float64"
+NFLX,"Ticker
+NFLX    1064.5
+dtype: float64","Ticker
+NFLX    987.909973
+Name: 2025-04-21 00:00:00, dtype: float64"
+NVDA,"Ticker
+NVDA    153.115916
+dtype: float64","Ticker
+NVDA    96.910004
+Name: 2025-04-21 00:00:00, dtype: float64"
+ORCL,"Ticker
+ORCL    197.115673
+dtype: float64","Ticker
+ORCL    126.639999
+Name: 2025-04-22 00:00:00, dtype: float64"
+PANW,"Ticker
+PANW    208.389999
+dtype: float64","Ticker
+PANW    162.720001
+Name: 2025-04-22 00:00:00, dtype: float64"
+PFE,"Ticker
+PFE    53.004872
+dtype: float64","Ticker
+PFE    22.439899
+Name: 2025-04-22 00:00:00, dtype: float64"
+PG,"Ticker
+PG    178.875026
+dtype: float64","Ticker
+PG    167.580002
+Name: 2025-04-22 00:00:00, dtype: float64"
+QCOM,"Ticker
+QCOM    227.026166
+dtype: float64","Ticker
+QCOM    136.845001
+Name: 2025-04-22 00:00:00, dtype: float64"
+RHHBY,"Ticker
+RHHBY    48.214982
+dtype: float64","Ticker
+RHHBY    38.970001
+Name: 2025-04-22 00:00:00, dtype: float64"
+SBUX,"Ticker
+SBUX    117.459999
+dtype: float64","Ticker
+SBUX    81.889999
+Name: 2025-04-22 00:00:00, dtype: float64"
+SMCI,"Ticker
+SMCI    122.900002
+dtype: float64","Ticker
+SMCI    30.57
+Name: 2025-04-22 00:00:00, dtype: float64"
+SNPS,"Ticker
+SNPS    629.380005
+dtype: float64","Ticker
+SNPS    410.407501
+Name: 2025-04-22 00:00:00, dtype: float64"
+T,"Ticker
+T    28.725113
+dtype: float64","Ticker
+T    26.33
+Name: 2025-04-21 00:00:00, dtype: float64"
+TMUS,"Ticker
+TMUS    276.48999
+dtype: float64","Ticker
+TMUS    256.795013
+Name: 2025-04-22 00:00:00, dtype: float64"
+UNH,"Ticker
+UNH    625.646261
+dtype: float64","Ticker
+UNH    425.519012
+Name: 2025-04-22 00:00:00, dtype: float64"
+V,"Ticker
+V    366.540009
+dtype: float64","Ticker
+V    331.054993
+Name: 2025-04-22 00:00:00, dtype: float64"
+WMT,"Ticker
+WMT    105.011633
+dtype: float64","Ticker
+WMT    94.739998
+Name: 2025-04-22 00:00:00, dtype: float64"
