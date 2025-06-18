@@ -1,89 +1,128 @@
-import yfinance as yf
+import requests
+import datetime as dt
+from datetime import datetime
+import time
+from tabulate import tabulate
 
-def get_stock_data_dict(symbols):
-    results = []
-    for symbol in symbols:
-        try:
-            # Fetch all available historical data
-            stock_data = yf.download(symbol, period="max")
+ALPHA_VANTAGE_API_KEY = 'YOUR_API_KEY'  # Get free key from https://www.alphavantage.co
 
-            if stock_data.empty:
-                print(f"Error: No data found for symbol {symbol}")
-                continue  # Skip to the next symbol
-
-            # Calculate the all-time high
-            all_time_high = stock_data['High'].max()
-
-            # Get the current price (last available closing price)
-            current_price = stock_data['Close'].iloc[-1]
-
-            results.append({
-                'symbol': symbol,
-                'high': all_time_high,
-                'current': current_price
-            })
-
-        except Exception as e:
-            print(f"Error processing {symbol}: {e}")
-            continue  # Skip to the next symbol
-
-    return results
-
-# Example usage:
-if __name__ == "__main__":
-    stock_list = tickers = [
-    'A', 'AAPL', 'ABBV', 'ABT', 'ACN', 'ADBE', 'ADI', 'ADP', 'ADSK', 'AEP', 
-    'AIG', 'AMAT', 'AMD', 'AMGN', 'AMT', 'AMZN', 'APD', 'AVGO', 'AXP', 'BA',
-    'BAC', 'BDX','BIIB', 'BK', 'BKNG', 'BLK', 'BMY', 'BRK.B', 'BSX', 'BWA','C', 'CAT',
-    'CB', 'CDNS','CHTR', 'CI', 'CL', 'CMCSA', 'CMG','COF', 'COP', 'COST', 'CPRT', 'CRM',
-    'CSCO', 'CVS', 'CVX', 'D', 'DAL', 'DD', 'DE', 'DHR', 'DIS', 'DOW',
-    'DUK', 'DVA', 'DVN', 'EA', 'EBAY', 'ECL', 'ED', 'EFX', 'EIX', 'EL',
-    'EMR', 'EOG', 'EQIX', 'EQR', 'ES', 'ESS', 'ETN', 'ETR', 'EW', 'EXC',
-    'EXPE', 'EXPD', 'F', 'FBHS', 'FCX', 'FDX', 'FE', 'FIS', 'FISV', 'FITB',
-    'FLT', 'FMC', 'FOX', 'FOXA', 'FRC', 'FTNT', 'GD', 'GE', 'GILD', 'GIS',
-    'GLW', 'GM', 'GOOG', 'GOOGL', 'GPC', 'GPN', 'GS', 'GWW', 'HAL', 'HAS',
-    'HBAN', 'HCA', 'HD', 'HES', 'HIG', 'HOLX', 'HON', 'HPQ', 'HRL', 'HSY',
-    'HUM', 'IBM', 'ICE', 'IDXX', 'IFF', 'ILMN', 'INCY', 'INTC', 'INTU', 'IP',
-    'IPG', 'IQV', 'IR', 'IRM', 'ISRG', 'IT', 'ITW', 'IVZ', 'J', 'JBHT',
-    'JCI', 'JKHY', 'JNJ', 'JPM', 'K', 'KEY', 'KEYS', 'KHC', 'KMI', 'KMX',
-    'KO', 'KR', 'L', 'LH', 'LHX', 'LIN', 'LLY', 'LMT', 'LNC', 'LOW',
-    'LRCX', 'LUMN', 'LUV', 'LVS', 'LW', 'LYB', 'M', 'MA', 'MCD', 'MCHP',
-    'MCK', 'MCO', 'MDLZ', 'MDT', 'MET', 'MGM', 'MHK', 'MKC', 'MKTX', 'MLM',
-    'MMC', 'MMM', 'MNST', 'MO', 'MOS', 'MPC', 'MRK', 'MRNA', 'MRO', 'MS',
-    'MSCI', 'MSFT', 'MSI', 'MTB', 'MTD', 'MU', 'NCLH', 'NDAQ', 'NEE', 'NEM',
-    'NFLX', 'NI', 'NKE', 'NOC', 'NOW', 'NRG', 'NSC', 'NTAP', 'NTRS', 'NUE',
-    'NVDA', 'NVR', 'NWL', 'NWS', 'NWSA', 'O', 'OKE', 'OMC', 'ORCL', 'ORLY',
-    'OTIS', 'OXY', 'PAYX', 'PCAR', 'PEAK', 'PEG', 'PEP', 'PFE', 'PFG', 'PG',
-    'PGR', 'PH', 'PHM', 'PKG', 'PKI', 'PLD', 'PM', 'PNC', 'PNR', 'PNW',
-    'PPG', 'PPL', 'PRU', 'PSA', 'PSX', 'PTC', 'PVH', 'PWR', 'PYPL', 'QCOM',
-    'QRVO', 'RCL', 'RE', 'REG', 'REGN', 'RF', 'RHHBY','RHI', 'RJF', 'RL', 'RMD',
-    'ROK', 'ROL', 'ROP', 'ROST', 'RSG', 'RTX', 'SBAC', 'SBUX', 'SCHW', 'SEE',
-    'SHW', 'SIVB', 'SJM', 'SLB', 'SNA', 'SNPS', 'SO', 'SPG', 'SPGI', 'SRE',
-    'STE', 'STT', 'STX', 'STZ', 'SWK', 'SWKS', 'SYF', 'SYK', 'SYY', 'T',
-    'TAP', 'TDG', 'TDY', 'TEL', 'TER', 'TFC', 'TFX', 'TGT', 'TJX', 'TMO',
-    'TMUS', 'TPR', 'TRMB', 'TROW', 'TRV', 'TSCO', 'TSLA', 'TSN', 'TT', 'TTWO',
-    'TWTR', 'TXN', 'TXT', 'TYL', 'UAL', 'UDR', 'UHS', 'ULTA', 'UNH', 'UNP',
-    'UPS', 'URI', 'USB', 'V', 'VFC', 'VLO', 'VMC', 'VNO', 'VRSK', 'VRSN',
-    'VRTX', 'VTR', 'VTRS', 'VZ', 'WAB', 'WAT', 'WBA', 'WDC', 'WEC', 'WELL',
-    'WFC', 'WHR', 'WM', 'WMB', 'WMT', 'WRB', 'WRK', 'WST', 'WU', 'WY',
-    'WYNN', 'XEL', 'XLNX', 'XOM', 'XRAY', 'XYL', 'YUM', 'ZBH', 'ZBRA', 'ZION',
-    'ZTS'
-]
+def get_stock_data(company):
+    ticker = company['ticker']
+    name = company['Company_name']
     
-    
-    
-    
-    
+    # Helper function to format large numbers
+    def format_large_num(num):
+        if num is None:
+            return 'N/A'
+        if num >= 1e12:
+            return f"${num/1e12:.2f}T"
+        elif num >= 1e9:
+            return f"${num/1e9:.2f}B"
+        elif num >= 1e6:
+            return f"${num/1e6:.2f}M"
+        else:
+            return f"${num:,.2f}"
 
- # Example list of stocks
+    # 1. Get current price and historical highs
+    price_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={ticker}&apikey={ALPHA_VANTAGE_API_KEY}"
+    price_response = requests.get(price_url).json()
+    
+    if "Time Series (Daily)" not in price_response:
+        print(f"Error fetching price data for {ticker}:", price_response.get('Note', 'Unknown error'))
+        return None
 
-    stock_data = get_stock_data_dict(stock_list)
+    daily_data = price_response["Time Series (Daily)"]
+    dates = sorted(daily_data.keys(), reverse=True)
+    
+    current_price = float(daily_data[dates[0]]["4. close"])
+    
+    # Calculate historical highs
+    today = datetime.now().date()
+    one_year_ago = today - dt.timedelta(days=365)
+    two_years_ago = today - dt.timedelta(days=365*2)
+    five_years_ago = today - dt.timedelta(days=365*5)
+    
+    high_1y = max(float(daily_data[date]["2. high"]) for date in dates 
+               if datetime.strptime(date, "%Y-%m-%d").date() >= one_year_ago)
+    
+    high_2y = max(float(daily_data[date]["2. high"]) for date in dates 
+               if datetime.strptime(date, "%Y-%m-%d").date() >= two_years_ago)
+    
+    high_5y = max(float(daily_data[date]["2. high"]) for date in dates 
+               if datetime.strptime(date, "%Y-%m-%d").date() >= five_years_ago)
 
-    if stock_data:
-        print(stock_data)
+    # 2. Get fundamental data
+    overview_url = f"https://www.alphavantage.co/query?function=OVERVIEW&symbol={ticker}&apikey={ALPHA_VANTAGE_API_KEY}"
+    overview = requests.get(overview_url).json()
+    
+    market_cap = float(overview.get('MarketCapitalization', 0))
+    pe_ratio = overview.get('PERatio', 'N/A')
+    
+    # 3. Get income statement (for revenue, net income, EBIT)
+    income_url = f"https://www.alphavantage.co/query?function=INCOME_STATEMENT&symbol={ticker}&apikey={ALPHA_VANTAGE_API_KEY}"
+    income_data = requests.get(income_url).json()
+    
+    if 'annualReports' in income_data and len(income_data['annualReports']) > 0:
+        latest_annual = income_data['annualReports'][0]
+        revenue = float(latest_annual.get('totalRevenue', 0))
+        net_income = float(latest_annual.get('netIncome', 0))
+        ebit = float(latest_annual.get('ebit', 0))
     else:
-        print("Could not retrieve stock data for any of the symbols.")
+        revenue = net_income = ebit = None
 
+    return {
+        'Company': name,
+        'Ticker': ticker,
+        'Price': format_large_num(current_price),
+        '1Y High': format_large_num(high_1y),
+        '2Y High': format_large_num(high_2y),
+        '5Y High': format_large_num(high_5y),
+        'Market Cap': format_large_num(market_cap),
+        'Revenue': format_large_num(revenue),
+        'Net Income': format_large_num(net_income),
+        'EBIT': format_large_num(ebit),
+        'P/E': pe_ratio if isinstance(pe_ratio, str) else f"{pe_ratio:.2f}"
+    }
 
+# List of companies to analyze
+companies = [
+    {"Company_name": "Amazon", "ticker": "AMZN"},
+    {"Company_name": "Mastercard", "ticker": "MA"},
+    {"Company_name": "Apple", "ticker": "AAPL"},
+    {"Company_name": "Microsoft", "ticker": "MSFT"},
+    {"Company_name": "Alphabet", "ticker": "GOOGL"}
+]
 
+# Process all companies
+results = []
+for company in companies:
+    print(f"Fetching data for {company['Company_name']} ({company['ticker']})...")
+    data = get_stock_data(company)
+    if data:
+        results.append(data)
+    time.sleep(12)  # Respect Alpha Vantage's 5 requests/minute limit
 
+# Prepare table data
+table_data = []
+headers = ['Company', 'Ticker', 'Price', '1Y High', '2Y High', '5Y High', 
+           'Market Cap', 'Revenue', 'Net Income', 'EBIT', 'P/E']
+
+for result in results:
+    table_data.append([
+        result['Company'],
+        result['Ticker'],
+        result['Price'],
+        result['1Y High'],
+        result['2Y High'],
+        result['5Y High'],
+        result['Market Cap'],
+        result['Revenue'],
+        result['Net Income'],
+        result['EBIT'],
+        result['P/E']
+    ])
+
+# Print table
+print("\nFinancial Metrics Comparison")
+print("="*120)
+print(tabulate(table_data, headers=headers, tablefmt='grid', stralign='right', numalign='right'))

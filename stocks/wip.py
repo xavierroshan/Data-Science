@@ -1,80 +1,104 @@
-import yfinance as yf
+import requests
 import pandas as pd
+from datetime import datetime, timedelta
 
-def get_stock_data_dict(symbols):
-    results = []
-    for symbol in symbols:
-        try:
-            # Fetch all available historical data
-            stock_data = yf.download(symbol, period="max")
+# Replace this with your actual Tiingo API Key
+API_KEY = "8f19a382b1de3d52beb5d4d4e62eae0b38702a2a"
 
-            if stock_data.empty:
-                print(f"Error: No data found for symbol {symbol}")
-                continue  # Skip to the next symbol
+headers = {
+    "Content-Type": "application/json",
+    "Authorization": f"Token {API_KEY}"
+}
 
-            # Calculate the all-time high
-            all_time_high = stock_data['High'].max()
+companies = [
+    {"Company_name": "Apple", "ticker": "AAPL"}
+]
 
-            # Get the current price (last available closing price)
-            current_price = stock_data['Close'].iloc[-1]
-
-            results.append({
-                'Symbol': symbol,
-                'All-Time High': all_time_high,
-                'Current Price': current_price
-            })
-
-        except Exception as e:
-            print(f"Error processing {symbol}: {e}")
-            continue  # Skip to the next symbol
-
-    return results
-
-# Example usage:
-if __name__ == "__main__":
-    stock_list = [
-    'A', 'AAPL', 'ABBV', 'ABT', 'ACN', 'ADBE', 'ADI', 'ADP', 'ADSK', 'AEP', 
-    'AIG', 'AMAT', 'AMD', 'AMGN', 'AMT', 'AMZN', 'APD', 'AVGO', 'AXP', 'BA',
-    'BAC', 'BDX','BIIB', 'BK', 'BKNG', 'BLK', 'BMY', 'BRK.B', 'BSX', 'BWA','C', 'CAT',
-    'CB', 'CDNS','CHTR', 'CI', 'CL', 'CMCSA', 'CMG','COF', 'COP', 'COST', 'CPRT', 'CRM',
-    'CSCO', 'CVS', 'CVX', 'D', 'DAL', 'DD', 'DE', 'DHR', 'DIS', 'DOW',
-    'DUK', 'DVA', 'DVN', 'EA', 'EBAY', 'ECL', 'ED', 'EFX', 'EIX', 'EL',
-    'EMR', 'EOG', 'EQIX', 'EQR', 'ES', 'ESS', 'ETN', 'ETR', 'EW', 'EXC',
-    'EXPE', 'EXPD', 'F', 'FBHS', 'FCX', 'FDX', 'FE', 'FIS', 'FISV', 'FITB',
-    'FLT', 'FMC', 'FOX', 'FOXA', 'FRC', 'FTNT', 'GD', 'GE', 'GILD', 'GIS',
-    'GLW', 'GM', 'GOOG', 'GOOGL', 'GPC', 'GPN', 'GS', 'GWW', 'HAL', 'HAS',
-    'HBAN', 'HCA', 'HD', 'HES', 'HIG', 'HOLX', 'HON', 'HPQ', 'HRL', 'HSY',
-    'HUM', 'IBM', 'ICE', 'IDXX', 'IFF', 'ILMN', 'INCY', 'INTC', 'INTU', 'IP',
-    'IPG', 'IQV', 'IR', 'IRM', 'ISRG', 'IT', 'ITW', 'IVZ', 'J', 'JBHT',
-    'JCI', 'JKHY', 'JNJ', 'JPM', 'K', 'KEY', 'KEYS', 'KHC', 'KMI', 'KMX',
-    'KO', 'KR', 'L', 'LH', 'LHX', 'LIN', 'LLY', 'LMT', 'LNC', 'LOW',
-    'LRCX', 'LUMN', 'LUV', 'LVS', 'LW', 'LYB', 'M', 'MA', 'MCD', 'MCHP',
-    'MCK', 'MCO', 'MDLZ', 'MDT', 'MET', 'MGM', 'MHK', 'MKC', 'MKTX', 'MLM',
-    'MMC', 'MMM', 'MNST', 'MO', 'MOS', 'MPC', 'MRK', 'MRNA', 'MRO', 'MS',
-    'MSCI', 'MSFT', 'MSI', 'MTB', 'MTD', 'MU', 'NCLH', 'NDAQ', 'NEE', 'NEM',
-    'NFLX', 'NI', 'NKE', 'NOC', 'NOW', 'NRG', 'NSC', 'NTAP', 'NTRS', 'NUE',
-    'NVDA', 'NVR', 'NWL', 'NWS', 'NWSA', 'O', 'OKE', 'OMC', 'ORCL', 'ORLY',
-    'OTIS', 'OXY', 'PAYX', 'PCAR', 'PEAK', 'PEG', 'PEP', 'PFE', 'PFG', 'PG',
-    'PGR', 'PH', 'PHM', 'PKG', 'PKI', 'PLD', 'PM', 'PNC', 'PNR', 'PNW',
-    'PPG', 'PPL', 'PRU', 'PSA', 'PSX', 'PTC', 'PVH', 'PWR', 'PYPL', 'QCOM',
-    'QRVO', 'RCL', 'RE', 'REG', 'REGN', 'RF', 'RHHBY','RHI', 'RJF', 'RL', 'RMD',
-    'ROK', 'ROL', 'ROP', 'ROST', 'RSG', 'RTX', 'SBAC', 'SBUX', 'SCHW', 'SEE',
-    'SHW', 'SIVB', 'SJM', 'SLB', 'SNA', 'SNPS', 'SO', 'SPG', 'SPGI', 'SRE',
-    'STE', 'STT', 'STX', 'STZ', 'SWK', 'SWKS', 'SYF', 'SYK', 'SYY', 'T',
-    'TAP', 'TDG', 'TDY', 'TEL', 'TER', 'TFC', 'TFX', 'TGT', 'TJX', 'TMO',
-    'TMUS', 'TPR', 'TRMB', 'TROW', 'TRV', 'TSCO', 'TSLA', 'TSN', 'TT', 'TTWO',
-    'TWTR', 'TXN', 'TXT', 'TYL', 'UAL', 'UDR', 'UHS', 'ULTA', 'UNH', 'UNP',
-    'UPS', 'URI', 'USB', 'V', 'VFC', 'VLO', 'VMC', 'VNO', 'VRSK', 'VRSN',
-    'VRTX', 'VTR', 'VTRS', 'VZ', 'WAB', 'WAT', 'WBA', 'WDC', 'WEC', 'WELL',
-    'WFC', 'WHR', 'WM', 'WMB', 'WMT', 'WRB', 'WRK', 'WST', 'WU', 'WY',
-    'WYNN', 'XEL', 'XLNX', 'XOM', 'XRAY', 'XYL', 'YUM', 'ZBH', 'ZBRA', 'ZION',
-    'ZTS']
-
-    stock_data = get_stock_data_dict(stock_list)
-
-    if stock_data:
-        df = pd.DataFrame(stock_data)
-        df.to_csv("sp500_stock_data.csv", index=False)
-        print("Stock data saved to 'sp500_stock_data.csv'")
+def get_current_price(ticker):
+    url = f"https://api.tiingo.com/tiingo/daily/{ticker}/prices"
+    response = requests.get(url, headers=headers)
+    if response.ok:
+        return response.json()[0].get("close", None)
     else:
-        print("Could not retrieve stock data for any of the symbols.")
+        print(f"Error fetching current price for {ticker}: {response.status_code} - {response.text}")
+    return None
+
+def get_high_since(ticker, start_date):
+    url = f"https://api.tiingo.com/tiingo/daily/{ticker}/prices?startDate={start_date}"
+    response = requests.get(url, headers=headers)
+    if response.ok:
+        prices = [d['high'] for d in response.json() if 'high' in d]
+        return max(prices) if prices else None
+    else:
+        print(f"Error fetching highs for {ticker}: {response.status_code} - {response.text}")
+    return None
+
+def get_fundamentals(ticker):
+    url = f"https://api.tiingo.com/tiingo/fundamentals/{ticker}/statements?statements=income_statement&limit=1"
+    response = requests.get(url, headers=headers)
+    if response.ok:
+        json_data = response.json()
+        if json_data and 'data' in json_data[0] and json_data[0]['data']:
+            data = json_data[0]['data'][0]
+            return {
+                "Net Profit": data.get("netIncome", None),
+                "EBIT": data.get("operatingIncome", None)
+            }
+        else:
+            print(f"No income statement data for {ticker}")
+    else:
+        print(f"Error fetching fundamentals for {ticker}: {response.status_code} - {response.text}")
+    return {"Net Profit": None, "EBIT": None}
+
+def get_pe_marketcap(ticker):
+    url = f"https://api.tiingo.com/tiingo/fundamentals/{ticker}/daily"
+    response = requests.get(url, headers=headers)
+    if response.ok:
+        data = response.json()
+        return {
+            "Market Cap": data.get("marketCap", None),
+            "PE Ratio": data.get("peRatio", None)
+        }
+    else:
+        print(f"Error fetching market cap/PE for {ticker}: {response.status_code} - {response.text}")
+    return {"Market Cap": None, "PE Ratio": None}
+
+# Dates for highs
+one_year_ago = (datetime.now() - timedelta(days=365)).date().isoformat()
+two_years_ago = (datetime.now() - timedelta(days=2 * 365)).date().isoformat()
+five_years_ago = (datetime.now() - timedelta(days=5 * 365)).date().isoformat()
+
+# Results list
+results = []
+
+# Loop over companies
+for company in companies:
+    ticker = company["ticker"]
+    print(f"Fetching data for {ticker}...")
+
+    current_price = get_current_price(ticker)
+    high_1y = get_high_since(ticker, one_year_ago)
+    high_2y = get_high_since(ticker, two_years_ago)
+    high_5y = get_high_since(ticker, five_years_ago)
+    fundamentals = get_fundamentals(ticker)
+    pe_and_mc = get_pe_marketcap(ticker)
+
+    results.append({
+        "Company": company["Company_name"],
+        "Ticker": ticker,
+        "Current Price": current_price,
+        "Market Cap": pe_and_mc["Market Cap"],
+        "PE Ratio": pe_and_mc["PE Ratio"],
+        "Net Profit": fundamentals["Net Profit"],
+        "EBIT": fundamentals["EBIT"],
+        "1Y High": high_1y,
+        "2Y High": high_2y,
+        "5Y High": high_5y
+    })
+
+# Convert to DataFrame
+df = pd.DataFrame(results)
+
+# Print or save
+print(df)
+# df.to_csv("stock_summary.csv", index=False)  # Uncomment to save

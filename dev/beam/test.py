@@ -1,13 +1,16 @@
-import base64
+import requests
+import json
+
+url = "https://finnhub.io/api/v1/global-filings/search?token=d17d8g9r01qtc1t7l3sgd17d8g9r01qtc1t7l3t0"
+
+payload = json.dumps({
+  "query": "artificial intelligence",
+  "symbols": "AAPL,GOOGL,TSLA",
+  "fromDate": "2024-01-01",
+  "toDate": "2025-05-30"
+})
 
 
-# Encoding and decoding with UTF-8
-original_string = "Hello, 世界"
-encoded_string_with_UTF = original_string.encode("UTF-16")
-print(encoded_string_with_UTF)
-decoded_byte_with_UTF = encoded_string_with_UTF.decode("UTF-16")
-print(decoded_byte_with_UTF )
+response = requests.request("POST", url, data=payload)
 
-
-encoded_byte_with_base64 = base64.b64encode(original_string)
-# print(decoded_byte_with_base64)
+print(response.json())
