@@ -33,3 +33,44 @@ INSERT INTO products (product_name, description, price, category_id) VALUES
 ('Blender', 'High-performance blender for smoothies and shakes', 79.99, 3),
 ('Pride and Prejudice', 'Jane Austen\'s classic novel', 9.99, 4),
 ('Yoga Mat', 'Non-slip yoga mat for exercise and fitness', 14.99, 5);
+
+
+/*trying put row(), sum() to understand better*/
+
+select * from emp;
+
+select deptno, sal, count(*) over (order by empno) as cnt from emp;
+select deptno, sal, count(*) over (order by deptno) as dept_count from emp;
+select deptno, sal, count(*) over (partition by deptno order by deptno) as dept_count from emp;
+select deptno, sal, row_number() over (order by empno) as row_cnt from emp; 
+select deptno, sal, row_number() over (order by deptno) as row_cnt from emp; 
+select deptno, sal, row_number() over (partition by deptno order by deptno) as row_cnt from emp; 
+select deptno, sal, rank() over (order by sal) as rank_sal from emp;
+select deptno, sal, rank() over (partition by deptno order by sal) as rank_sal from emp;
+select deptno, sal, dense_rank() over (order by sal) as rank_sal from emp;
+select deptno, sal, dense_rank() over (partition by deptno order by sal) as rank_sal from emp;
+
+select ename, deptno, sum(sal) from emp
+group by ename, deptno
+
+
+
+select ename, job, deptno, sal from emp
+where case when deptno = 10 then job='clerk' else job = 'salesman'  end
+
+select * from emp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
